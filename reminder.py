@@ -12,7 +12,7 @@ ich bin ein Bot, der euch an die Feiertage auf eine besondere Weise erinnert.
 Meinen Code findet ihr unter: https://github.com/Simon198/holiday_reminder_telegram_bot
 """
 
-with open('translate.json', 'r') as file:
+with open(dir_path + '/translate.json', 'r') as file:
     translation_dict = json.loads(file.read())
 
 def getCustomHolidayMessage(holidayName, genum='m'):
