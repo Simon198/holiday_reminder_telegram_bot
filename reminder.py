@@ -6,6 +6,11 @@ import os
 
 dir_path = os.path.abspath(os.path.dirname(__file__))
 
+INITIAL_MESSAGE = """Guten Tag,
+ich bin ein Bot, der euch an die Feiertage auf eine besondere Weise erinnert.
+Meinen Code findet ihr unter: https://github.com/Simon198/holiday_reminder_telegram_bot
+"""
+
 def getCustomHolidayMessage(holidayName):
     return 'Fröhlichen ' + holidayName + ', ihr Lappen'
 
@@ -45,8 +50,10 @@ def update_chat_ids():
         if latest_offset == offset:
             continue
 
-        if (text == '/start' or text == '/start' + bot.name) and chat_id not in chat_ids:
-            chat_ids.append(chat_id)
+        if text == '/start' or text == '/start' + bot.name:
+            bot.send_message(chat_id=chat_id, text=INITIAL_MESSAGE)
+            if chat_id not in chat_ids:
+                chat_ids.append(chat_id)
         elif text == '/end' or text == '/end' + bot.name:
             chat_ids.remove(chat_id)
 
