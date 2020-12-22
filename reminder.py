@@ -3,6 +3,7 @@ import holidays
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, CallbackContext
 from telegram import Update, Bot
 import os
+import json
 
 dir_path = os.path.abspath(os.path.dirname(__file__))
 
@@ -11,10 +12,21 @@ ich bin ein Bot, der euch an die Feiertage auf eine besondere Weise erinnert.
 Meinen Code findet ihr unter: https://github.com/Simon198/holiday_reminder_telegram_bot
 """
 
-def getCustomHolidayMessage(holidayName):
-    return 'Fröhlichen ' + holidayName + ', ihr Lappen'
+with open('translate.json', 'r') as file:
+    translation_dict = json.loads(file.read())
 
-def getHolidayName():
+def getCustomHolidayMessage(holidayName, genum='m'):
+    customMessage = ''
+    if genum == 'm':
+        customMessage += 'Fröhlicher'
+    elif genum == 'f':
+        customMessage += 'Fröhliche'
+    elif genum == 'n':
+        customMessage += 'Fröhliches'
+
+    return customMessage + ' ' + holidayName + ', ihr Lappen'
+
+def getHoliday():
     for nationHolidays in [
         holidays.Germany(),
         holidays.India(),
@@ -25,7 +37,19 @@ def getHolidayName():
     ]:
         holidayName = nationHolidays.get(date.today())
         if holidayName is not None:
-            return holidayName + ' (' + nationHolidays.country + ')'
+            country = nationHolidays.country
+            if holidayName in translation_dict[country]:
+                holiday = translation_dict[country][holidayName]
+            else:
+                holiday = {
+                    'translation': holidayName,
+                    'genum': 'm'
+                }
+
+            if country != 'DE':
+                holiday['translation'] += ' (' + country + ')'
+            
+            return holiday
 
     return None
 
@@ -68,11 +92,11 @@ def update_chat_ids():
 def main ():
     bot, chat_ids = update_chat_ids()
 
-    holidayName = getHolidayName()
-    if holidayName is None:
+    holiday = getHoliday()
+    if holiday is None:
         exit()
 
-    custom_message = getCustomHolidayMessage(holidayName)
+    custom_message = getCustomHolidayMessage(holiday['translation'], holiday['genum'])
     for chat_id in chat_ids:
         bot.send_message(chat_id=chat_id, text=custom_message)
 
