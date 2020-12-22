@@ -1,3 +1,8 @@
+# project files
+TOKEN.txt
+CHAT_IDS.txt
+OFFSET.txt
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
