@@ -84,8 +84,9 @@ def update_chat_ids():
     with open(dir_path + '/CHAT_IDS.txt', 'w') as file:
         file.write('\n'.join(chat_ids))
 
-    with open(dir_path + '/OFFSET.txt', 'w') as file:
-        file.write(str(latest_offset))
+    if len(updates) > 0:
+        with open(dir_path + '/OFFSET.txt', 'w') as file:
+            file.write(str(latest_offset))
     
     return bot, chat_ids
 
